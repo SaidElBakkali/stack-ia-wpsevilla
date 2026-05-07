@@ -1,0 +1,14 @@
+{
+  "name": "stack-ia-wpsevilla",
+  "private": true,
+  "scripts": {
+    "dev": "slidev slides.md --open",
+    "build": "slidev build slides.md --base /",
+    "export": "slidev export slides.md"
+  },
+  "dependencies": {
+    "@iconify-json/mdi": "latest",
+    "@slidev/cli": "^52.15.1",
+    "@slidev/theme-seriph": "^0.25.0"
+  }
+}
