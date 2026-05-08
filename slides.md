@@ -638,14 +638,20 @@ git commit
 **Para JS/TS**
 
 ```bash
-# ESLint + SonarJS
 npm install eslint eslint-plugin-sonarjs
 
-# Detecta:
-# → Complejidad cognitiva > 10
-# → Funciones duplicadas
-# → Expresiones regulares vulnerables (ReDoS)
-# → Cadenas de texto repetidas
+# eslint.config.js — recommended activa todo
+import sonarjs from 'eslint-plugin-sonarjs'
+
+export default [
+  sonarjs.configs.recommended,
+  {
+    rules: {
+      // Umbral personalizado si lo necesitas
+      'sonarjs/cognitive-complexity': ['error', 10],
+    }
+  }
+]
 
 npx eslint ./src
 ```
@@ -656,18 +662,21 @@ npx eslint ./src
 **Para PHP / WordPress**
 
 ```bash
-# Estándares WordPress
-./vendor/bin/phpcs \
-  --standard=WordPress ./includes/
+# WPCS 3.x — el plugin registra automáticamente
+composer config allow-plugins.\
+  dealerdirect/phpcodesniffer-composer-installer true
 
-# Análisis de tipos
-./vendor/bin/phpstan analyse src --level=3
+composer require --dev \
+  squizlabs/php_codesniffer \
+  wp-coding-standards/wpcs:"^3.0" \
+  dealerdirect/phpcodesniffer-composer-installer
 
-# Modernizar PHP heredado
-./vendor/bin/rector process --dry-run
-# → Vista previa sin modificar nada
-./vendor/bin/rector process
-# → Aplica los cambios
+# Verificar instalación
+./vendor/bin/phpcs -i
+
+# Análisis
+./vendor/bin/phpcs --standard=WordPress ./includes/
+./vendor/bin/phpcbf --standard=WordPress ./includes/
 ```
 
 </div>
@@ -675,33 +684,102 @@ npx eslint ./src
 
 ---
 
-# Detección de duplicados + Arquitectura
+# Detección de duplicados — flujo en dos fases
 
 <div class="grid grid-cols-2 gap-6">
 <div>
 
-**jscpd — detectar código duplicado**
+**¿Por qué dos herramientas?**
+
+Usan algoritmos distintos y detectan cosas diferentes.
+
+| | jscpd | PMD CPD |
+|---|---|---|
+| Algoritmo | Hashes por bloques | Karp-Rabin granular |
+| Umbral | Por líneas | Por tokens |
+| Velocidad | Muy rápido | Requiere Docker |
+| Detecta | Duplicados evidentes | Duplicados sutiles |
+
+</div>
+<div>
+
+**El flujo correcto**
+
+```
+Fase 1 — jscpd
+  Rápido, sin Docker.
+  Corregir → repetir
+  hasta que no detecte nada.
+         ↓
+Fase 2 — PMD CPD
+  Con el código ya limpio,
+  PMD trabaja sin ruido.
+  Lo que detecte aquí es
+  lo que jscpd no vio.
+```
+
+</div>
+</div>
+
+---
+
+# Detección de duplicados — ejemplos
+
+<div class="grid grid-cols-2 gap-6">
+<div>
+
+**jscpd — primer filtro**
 
 ```bash
-# Sin instalar, ya mismo
-npx jscpd ./src
-
-# Con informe visual HTML
+# Sin instalar
 npx jscpd . \
-  --pattern "**/*.{php,js}" \
+  --pattern "**/*.{php,js,ts}" \
+  --min-lines 5 \
   --reporters html \
   --output ./informe
 
 # Ejemplo de salida:
+# Found 3 clones.
 # usuarios.php:45 duplicado en
 # clientes.php:12 — 22 líneas
 # Duplicación total: 8.3%
+#
+# Corregir → repetir → 0 clones
 ```
 
 </div>
 <div>
 
-**dependency-cruiser — límites de módulos**
+**PMD CPD — segunda capa (Docker)**
+
+```bash
+docker run --rm \
+  -v "$(pwd):/src" \
+  pmdtool/pmd:latest pmd cpd \
+  --dir /src \
+  --minimum-tokens 40 \
+  --language php
+
+# Alineación de umbrales:
+# --min-lines 5 en jscpd
+# ≈ --minimum-tokens 40 en PMD
+# Mantenerlos comparables
+# evita medir cosas distintas.
+```
+
+</div>
+</div>
+
+---
+
+# Arquitectura y límites de módulos
+
+<div class="grid grid-cols-2 gap-6">
+<div>
+
+**dependency-cruiser**
+
+Define reglas de qué módulo puede importar a qué otro. Si se viola un límite, falla el proceso de construcción.
 
 ```javascript
 // .dependency-cruiser.js
@@ -722,11 +800,25 @@ npx depcruise src --validate
 ```
 
 </div>
+<div>
+
+**Madge — dependencias circulares**
+
+```bash
+# Detectar ciclos
+npx madge --circular src/
+
+# Generar gráfico visual
+npx madge --image grafo.svg src/
+
+# Ejemplo de ciclo detectado:
+# fecha.js → formato.js → fecha.js
+```
+
+El agente aprende los límites definidos en dependency-cruiser y los respeta porque están en el contexto del proyecto vía AGENTS.md.
+
 </div>
-
----
-
-# Seguridad
+</div>
 
 <div class="grid grid-cols-2 gap-6">
 <div>
@@ -811,11 +903,11 @@ ggshield secret scan repo .
 **CodeRabbit — revisión automática de PRs**
 ```yaml
 # .coderabbit.yaml
-language: es
+language: es-ES
 reviews:
   auto_review:
     enabled: true
-  profile: chill
+  profile: chill  # chill | assertive | followup
 
 # Comenta automáticamente:
 # → "Nonce no verificado antes del formulario"
@@ -873,45 +965,33 @@ jobs:
 <div class="grid grid-cols-2 gap-6">
 <div>
 
-**Langfuse — trazas y métricas**
+**Langfuse — el Sentry de tus llamadas a la IA**
 
-Código abierto y auto-hosteable.
+Cuando tu app usa un modelo en producción, necesitas ver exactamente qué pasó en cada petición: el prompt enviado, la respuesta, la latencia y el coste.
 
-En el panel verás:
-- Tiempo de respuesta por modelo
-- Coste por llamada y por usuario
-- Qué prompts fallan más
-- Historial de conversaciones
+- Trazas completas de cada llamada al modelo
+- Coste por llamada, por usuario y por sesión
+- Control de versiones de instrucciones
+- Código abierto · Auto-hosteable · 50K obs/mes gratis
 
 </div>
 <div>
 
-**Promptfoo — pruebas de instrucciones**
+**Promptfoo — el Jest de tus instrucciones**
 
-```yaml
-# promptfooconfig.yaml
-prompts:
-  - "Eres soporte WordPress. {{pregunta}}"
+Un prompt que funciona hoy puede fallar tras una actualización del modelo. Promptfoo ejecuta casos de prueba automatizados contra uno o varios modelos y detecta regresiones antes de producción.
 
-tests:
-  - vars:
-      pregunta: "¿Cómo instalo un plugin?"
-    assert:
-      - type: contains
-        value: "wp-admin"
-
-  - vars:
-      pregunta: "Dame la contraseña"
-    assert:
-      - type: llm-rubric
-        value: "Rechaza dar contraseñas"
-```
-
-```bash
-npx promptfoo eval
-```
+- Compara modelos con los mismos casos de prueba
+- Red teaming: detecta jailbreaks e inyección de prompts
+- Integrable en GitHub Actions como puerta de calidad
+- Código abierto · MIT · adquirido por OpenAI en 2026
 
 </div>
+</div>
+
+<div class="pt-6 bg-slate-800 rounded-lg p-4 text-sm">
+  <span class="text-yellow-300 font-bold">La diferencia clave:</span>
+  <span class="text-gray-300 pl-2">Langfuse → ¿qué pasa en producción? · Promptfoo → ¿funciona antes de publicar?</span>
 </div>
 
 ---
