@@ -31,43 +31,6 @@ layout: quote
 # "Una herramienta sola no es un flujo de trabajo."
 
 ---
-layout: two-cols
-class: items-center
----
-
-<div class="text-center pr-8">
-  <img src="https://github.com/SaidElBakkali.png" class="rounded-full w-48 h-48 mx-auto border-4 border-blue-500" />
-  <div class="text-2xl font-bold pt-6">Said El Bakkali</div>
-  <div class="text-gray-400 pt-2">Desarrollador web · Sevilla</div>
-  <div class="text-sm text-blue-400 pt-1">Miembro de la comunidad desde hace más de una década</div>
-</div>
-
-::right::
-
-<div class="pl-8 space-y-5 pt-4">
-  <div class="flex items-center gap-3">
-    <div class="i-mdi-web text-2xl text-blue-400" />
-    <a href="https://saidelbakkali.com" class="text-blue-400 hover:underline">saidelbakkali.com</a>
-  </div>
-  <div class="flex items-center gap-3">
-    <div class="i-mdi-linkedin text-2xl text-blue-500" />
-    <a href="https://www.linkedin.com/in/saidelbakkali/" class="text-blue-400 hover:underline">linkedin.com/in/saidelbakkali</a>
-  </div>
-  <div class="flex items-center gap-3">
-    <div class="i-mdi-github text-2xl text-white" />
-    <a href="https://github.com/SaidElBakkali" class="text-blue-400 hover:underline">github.com/SaidElBakkali</a>
-  </div>
-  <div class="flex items-center gap-3">
-    <div class="i-mdi-wordpress text-2xl text-blue-400" />
-    <a href="https://profiles.wordpress.org/sa3idho/" class="text-blue-400 hover:underline">wordpress.org/sa3idho</a>
-  </div>
-  <div class="flex items-center gap-3">
-    <div class="i-mdi-email text-2xl text-gray-300" />
-    <a href="mailto:contact@saidelbakkali.com" class="text-blue-400 hover:underline">contact@saidelbakkali.com</a>
-  </div>
-</div>
-
----
 layout: center
 ---
 
@@ -374,27 +337,27 @@ problema → línea → por qué → cómo corregir
   <div class="bg-slate-800 rounded-lg p-4">
     <span class="text-blue-400 font-bold">GitHub</span>
     <span class="text-gray-300 pl-2">— repositorios, peticiones de cambio, historial</span>
+    <div class="text-xs text-slate-500 pt-1 font-mono">@modelcontextprotocol/server-github</div>
   </div>
   <div class="bg-slate-800 rounded-lg p-4">
     <span class="text-green-400 font-bold">PostgreSQL</span>
     <span class="text-gray-300 pl-2">— consultas a la base de datos en lenguaje natural</span>
+    <div class="text-xs text-slate-500 pt-1 font-mono">@modelcontextprotocol/server-postgres</div>
   </div>
-  <div class="bg-slate-800 rounded-lg p-4">
+  <div class="bg-slate-800 rounded-lg p-4 col-span-2">
     <span class="text-yellow-400 font-bold">Chrome DevTools</span>
-    <span class="text-gray-300 pl-2">— inspecciona DOM, lee consola, depura en tiempo real</span>
+    <span class="text-gray-300 pl-2">— depuración, DOM, consola, rendimiento y automatización del navegador</span>
+    <div class="text-xs text-slate-500 pt-1 font-mono">chrome-devtools-mcp · paquete oficial de Google · incluye Puppeteer internamente</div>
   </div>
-  <div class="bg-slate-800 rounded-lg p-4">
-    <span class="text-orange-400 font-bold">Puppeteer</span>
-    <span class="text-gray-300 pl-2">— automatiza el navegador, capturas, formularios, PDFs</span>
-  </div>
-  <div class="bg-slate-800 rounded-lg p-4">
+  <div class="bg-slate-800 rounded-lg p-4 col-span-2">
     <span class="text-purple-400 font-bold">Filesystem</span>
     <span class="text-gray-300 pl-2">— acceso controlado a carpetas de tu máquina</span>
+    <div class="text-xs text-slate-500 pt-1 font-mono">@modelcontextprotocol/server-filesystem /ruta/al/proyecto</div>
   </div>
 </div>
 
-<div class="pt-6 text-yellow-300 text-sm">
-  ⚠️ Permisos mínimos siempre. Modo solo lectura para empezar. Nunca credenciales de producción.
+<div class="pt-4 text-yellow-300 text-sm">
+  ⚠️ Los MCP se configuran en JSON, no se ejecutan directamente. Permisos mínimos siempre.
 </div>
 
 ---
@@ -403,7 +366,7 @@ layout: section
 
 # 3. Marcos de orquestación
 
-### La novedad de 2025/2026
+### La novedad de 2026
 
 ---
 layout: center
@@ -454,24 +417,31 @@ layout: center
 
 ```bash
 npx get-shit-done-cc@latest
+# Reinicia el agente después de instalar
 ```
 
 </div>
 <div>
 
 ```bash
-# Flujo típico
-/gsd start "Sistema de reservas WordPress"
-# → Crea la especificación y divide en tareas
+# Proyecto nuevo desde cero
+/gsd-new-project
+# → Preguntas, requisitos y hoja de ruta
 
-/gsd task "Crear tabla de base de datos"
-# → Trabaja con contexto limpio y fresco
+# Proyecto existente: indexar primero
+/gsd-map-codebase
+# → Analiza arquitectura y convenciones
 
-/gsd status
-# → Estado de todas las tareas
+# Planificar una fase concreta
+/gsd-plan-phase 1
+# → Investiga, planifica y verifica
 
-/gsd next
-# → Siguiente tarea, contexto nuevo
+# Discutir antes de planificar
+/gsd-discuss-phase 1
+# → Captura decisiones de diseño previas
+
+# Tarea pequeña sin proceso completo
+/gsd-quick "Añadir validación al formulario"
 ```
 
 </div>
@@ -486,12 +456,10 @@ npx get-shit-done-cc@latest
 
 **Cultura de ingeniería como carpeta de texto**
 
-Fuerza desarrollo guiado por pruebas en 7 fases:
-
-lluvia de ideas → planificación → **pruebas** → código → revisión
+Las skills se activan **automáticamente** — no hay que invocarlas. En cuanto describes algo que quieres construir, Superpowers intercepta antes de que el agente escriba código.
 
 - ~106K ⭐ en GitHub
-- La misma carpeta funciona en todos los agentes
+- Funciona en Claude Code, Cursor, Windsurf, OpenCode, Codex...
 
 ```bash
 /plugin install superpowers@claude-plugins-official
@@ -500,21 +468,24 @@ lluvia de ideas → planificación → **pruebas** → código → revisión
 </div>
 <div>
 
-```
-Flujo que impone Superpowers:
+```bash
+# Skills que activan automáticamente:
+# brainstorming → write-plan → execute-plan
 
-Fase 1: lluvia de ideas
-Fase 2: planificación
-Fase 3: escritura de pruebas ← OBLIGATORIO
-Fase 4: implementación
-Fase 5: revisión
+# Si quieres invocarlas explícitamente:
+/brainstorming
+# → Exploración de requisitos antes de codificar
 
-Si el agente escribe código antes
-de tener pruebas:
+/write-plan
+# → Plan detallado con tareas de 2-5 minutos
 
-→ Superpowers borra el código
-→ Vuelve a la fase 3
-→ Sin excepciones
+/execute-plan
+# → Subagentes ejecutan con revisión en cada paso
+
+# Si el agente escribe código sin pruebas previas:
+# → Superpowers borra la implementación
+# → Vuelve a la fase de pruebas
+# → Sin excepciones
 ```
 
 </div>
@@ -534,29 +505,38 @@ de tener pruebas:
 ~39-70K ⭐ · Lanzado marzo 2026
 
 ```bash
-git clone https://github.com/garrytan/gstack.git \
-  ~/.claude/skills/gstack
+git clone --single-branch --depth 1 \
+  https://github.com/garrytan/gstack.git \
+  ~/.claude/skills/gstack \
+  && cd ~/.claude/skills/gstack \
+  && ./setup
 ```
 
 </div>
 <div>
 
 ```bash
-/ceo
-# ¿Realmente necesitamos esto?
-# ¿Qué problema resuelve al usuario?
+/plan-ceo-review
+# CEO + diseño + ingeniería en un comando
+# ¿Tiene sentido lo que vamos a construir?
 
-/staff-engineer
-# Revisión de arquitectura y deuda técnica
+/plan-eng-review
+# Bloquea la arquitectura antes de codificar
+# Genera plan revisado listo para ejecutar
 
-/qa-lead
-# Abre el navegador y busca fallos reales
+/review
+# Revisión completa: corrige lo evidente,
+# señala lo que no puede corregir solo
 
-/security
-# Threat modeling: ¿qué puede salir mal?
+/qa
+# Abre un navegador real, navega por la app
+# y busca fallos que los tests no detectan
 
-/pm
-# Escribe criterios de aceptación primero
+/ship
+# Prepara y envía el PR con revisión integrada
+
+/retro
+# Retrospectiva: commits, calidad, tendencias
 ```
 
 </div>
@@ -1009,14 +989,47 @@ class: text-center
 
 # ¡Gracias!
 
-<div class="pt-8 text-gray-400">
-  Comunidad WordPress Sevilla · Miembro desde 2013
-</div>
-
 <div class="pt-6 text-sm text-gray-500">
   Slides: <span class="text-blue-400">stack-ia-wpsvq.pages.dev</span>
 </div>
 
 <div class="pt-10 text-gray-400 text-sm">
   Preguntas 👇
+</div>
+
+---
+layout: two-cols
+class: items-center
+---
+
+<div class="text-center pr-8">
+  <img src="https://github.com/SaidElBakkali.png" class="rounded-full w-48 h-48 mx-auto border-4 border-blue-500" />
+  <div class="text-2xl font-bold pt-6">Said El Bakkali</div>
+  <div class="text-gray-400 pt-2">Desarrollador web · Sevilla</div>
+  <div class="text-sm text-blue-400 pt-1">Parte de esta comunidad desde hace más de una década</div>
+</div>
+
+::right::
+
+<div class="pl-8 space-y-5 pt-4">
+  <div class="flex items-center gap-3">
+    <div class="i-mdi-web text-2xl text-blue-400" />
+    <a href="https://saidelbakkali.com" class="text-blue-400 hover:underline">saidelbakkali.com</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="i-mdi-linkedin text-2xl text-blue-500" />
+    <a href="https://www.linkedin.com/in/saidelbakkali/" class="text-blue-400 hover:underline">linkedin.com/in/saidelbakkali</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="i-mdi-github text-2xl text-white" />
+    <a href="https://github.com/SaidElBakkali" class="text-blue-400 hover:underline">github.com/SaidElBakkali</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="i-mdi-wordpress text-2xl text-blue-400" />
+    <a href="https://profiles.wordpress.org/sa3idho/" class="text-blue-400 hover:underline">wordpress.org/sa3idho</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="i-mdi-email text-2xl text-gray-300" />
+    <a href="mailto:contact@saidelbakkali.com" class="text-blue-400 hover:underline">contact@saidelbakkali.com</a>
+  </div>
 </div>
