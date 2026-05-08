@@ -1070,7 +1070,7 @@ class: text-center
 # ¡Gracias!
 
 <div class="pt-6 text-sm text-gray-500">
-  Slides: <span class="text-blue-400">stack-ia-wpsvq.pages.dev</span>
+  Slides: <span class="text-blue-400">stack-ia-wpsevilla.saidelbakkali.com</span>
 </div>
 
 <div class="pt-10 text-gray-400 text-sm">
