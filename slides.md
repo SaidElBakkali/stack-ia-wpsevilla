@@ -411,37 +411,43 @@ layout: center
 
 **Gestión del contexto + especificaciones**
 
-- Divide el trabajo en fases con contextos frescos
+- El flujo completo son **6 pasos** con contextos frescos
 - Compatible con **14 entornos** distintos
 - ~54K ⭐ en GitHub
 
 ```bash
 npx get-shit-done-cc@latest
-# Reinicia el agente después de instalar
+# El instalador pregunta tu entorno
+# Reinicia el agente después
 ```
 
 </div>
 <div>
 
 ```bash
-# Proyecto nuevo desde cero
-/gsd-new-project
-# → Preguntas, requisitos y hoja de ruta
-
-# Proyecto existente: indexar primero
+# Proyecto existente — primero
 /gsd-map-codebase
-# → Analiza arquitectura y convenciones
 
-# Planificar una fase concreta
-/gsd-plan-phase 1
-# → Investiga, planifica y verifica
+# Proyecto nuevo — inicio
+/gsd-new-project
 
-# Discutir antes de planificar
+# Paso 1 — discutir decisiones
 /gsd-discuss-phase 1
-# → Captura decisiones de diseño previas
 
-# Tarea pequeña sin proceso completo
-/gsd-quick "Añadir validación al formulario"
+# Paso 2 — investigar y planificar
+/gsd-plan-phase 1
+
+# Paso 3 — ejecutar con subagentes
+/gsd-execute-phase 1
+
+# Paso 4 — verificar
+/gsd-verify-work 1
+
+# Paso 5 — crear el PR
+/gsd-ship 1
+
+# Tareas pequeñas sin proceso completo
+/gsd-quick "Añadir validación"
 ```
 
 </div>
@@ -454,12 +460,12 @@ npx get-shit-done-cc@latest
 <div class="grid grid-cols-2 gap-6">
 <div>
 
-**Cultura de ingeniería como carpeta de texto**
+**14 skills que se activan automáticamente**
 
-Las skills se activan **automáticamente** — no hay que invocarlas. En cuanto describes algo que quieres construir, Superpowers intercepta antes de que el agente escriba código.
+En cuanto describes algo que quieres construir, el dispatcher intercepta y activa el flujo correcto — sin invocar nada manualmente.
 
-- ~106K ⭐ en GitHub
-- Funciona en Claude Code, Cursor, Windsurf, OpenCode, Codex...
+- ~150K ⭐ · MIT · Marketplace oficial Anthropic
+- Claude Code, Codex, OpenCode, Cursor, Windsurf...
 
 ```bash
 /plugin install superpowers@claude-plugins-official
@@ -469,26 +475,35 @@ Las skills se activan **automáticamente** — no hay que invocarlas. En cuanto 
 <div>
 
 ```bash
-# Skills que activan automáticamente:
-# brainstorming → write-plan → execute-plan
-
 # Si quieres invocarlas explícitamente:
-/brainstorming
-# → Exploración de requisitos antes de codificar
 
-/write-plan
-# → Plan detallado con tareas de 2-5 minutos
+/superpowers:brainstorm
+# Diálogo socrático antes del código
+# → Forma corta: /brainstorming
 
-/execute-plan
-# → Subagentes ejecutan con revisión en cada paso
+/superpowers:write-plan
+# Plan con código completo, rutas exactas
+# → Forma corta: /writing-plans
 
-# Si el agente escribe código sin pruebas previas:
-# → Superpowers borra la implementación
-# → Vuelve a la fase de pruebas
-# → Sin excepciones
+/superpowers:execute-plan
+# Subagentes + revisión en 2 etapas por tarea
+
+/superpowers:debug
+# 4 fases: observar → hipótesis → verificar → corregir
+
+/superpowers:code-review
+# Revisión pre-merge contra la especificación
+
+# Si el agente olvida sus skills:
+/using-superpowers
 ```
 
 </div>
+</div>
+
+<div class="pt-4 bg-slate-800 rounded-lg p-3 text-sm">
+  <span class="text-red-400 font-bold">Regla absoluta:</span>
+  <span class="text-gray-300 pl-2">Tests ANTES del código. Si el agente escribe código sin pruebas → Superpowers borra la implementación. Sin excepciones.</span>
 </div>
 
 ---
@@ -498,9 +513,9 @@ Las skills se activan **automáticamente** — no hay que invocarlas. En cuanto 
 <div class="grid grid-cols-2 gap-6">
 <div>
 
-**Simula un equipo de 23 personas**
+**Equipo virtual de especialistas**
 
-28 comandos, cada uno activa un rol distinto con su propio contexto limpio.
+Cada comando activa un rol distinto con contexto limpio. Requiere Bun v1.0+.
 
 ~39-70K ⭐ · Lanzado marzo 2026
 
@@ -516,27 +531,31 @@ git clone --single-branch --depth 1 \
 <div>
 
 ```bash
-/plan-ceo-review
-# CEO + diseño + ingeniería en un comando
+/office-hours
+# Brainstorming ANTES de planificar
 # ¿Tiene sentido lo que vamos a construir?
 
-/plan-eng-review
-# Bloquea la arquitectura antes de codificar
-# Genera plan revisado listo para ejecutar
+/plan-ceo-review
+# Alcance desde perspectiva del usuario
+
+/plan-eng-review  ← ÚNICA PUERTA OBLIGATORIA
+# Arquitectura bloqueada antes de codificar
 
 /review
-# Revisión completa: corrige lo evidente,
-# señala lo que no puede corregir solo
+# Revisión pre-merge: SQL, seguridad, estructura
 
 /qa
-# Abre un navegador real, navega por la app
-# y busca fallos que los tests no detectan
+# Navegador real — encuentra lo que los tests no ven
+# Genera pruebas de regresión por cada bug
 
 /ship
-# Prepara y envía el PR con revisión integrada
+# PR con documentación y cobertura de pruebas
 
 /retro
-# Retrospectiva: commits, calidad, tendencias
+# Retrospectiva semanal con métricas reales
+
+/investigate
+# Análisis post-mortem de flujos fallidos
 ```
 
 </div>
@@ -755,7 +774,7 @@ npx jscpd . \
 ```bash
 docker run --rm \
   -v "$(pwd):/src" \
-  pmdtool/pmd:latest pmd cpd \
+  pmdcode/pmd:latest pmd cpd \
   --dir /src \
   --minimum-tokens 40 \
   --language php
@@ -820,6 +839,10 @@ El agente aprende los límites definidos en dependency-cruiser y los respeta por
 </div>
 </div>
 
+---
+
+# Seguridad
+
 <div class="grid grid-cols-2 gap-6">
 <div>
 
@@ -881,7 +904,8 @@ npm audit fix
 
 **TruffleHog — historial de git**
 ```bash
-docker run trufflesecurity/trufflehog:latest \
+docker run --rm -v "$(pwd):/pwd" \
+  trufflesecurity/trufflehog:latest \
   git file:///pwd
 
 # Detecta:
@@ -918,7 +942,9 @@ reviews:
 **PR-Agent — código abierto y auto-hosteable**
 ```bash
 # Con Ollama, sin enviar código a terceros
-docker run codiumai/pr-agent \
+docker run --rm \
+  -e OPENAI_API_KEY=tu-clave \
+  codiumai/pr-agent \
   --pr_url https://github.com/.../pull/42 review
 ```
 
@@ -1002,26 +1028,26 @@ layout: section
 
 ---
 
-# Lo que aprendí en tres proyectos
+# Patrones que se repiten en proyectos WordPress
 
 <div class="grid grid-cols-3 gap-4 pt-4">
   <div class="bg-slate-800 rounded-xl p-5">
-    <div class="text-2xl">🖥️</div>
-    <div class="font-bold pt-2">CLI para entornos locales</div>
-    <div class="text-sm text-gray-300 pt-3">El agente generó pruebas automatizadas desde la documentación. CI evitó regresiones en cada cambio.</div>
-    <div class="pt-4 text-yellow-300 text-xs font-semibold">Sin pruebas, el agente no sabe cuándo rompe algo.</div>
+    <div class="text-2xl">🔍</div>
+    <div class="font-bold pt-2 text-sm">23% de duplicación en un plugin activo</div>
+    <div class="text-xs text-gray-300 pt-3">Tres años de vida, varios desarrolladores. jscpd encuentra la lógica de validación repetida en cinco ficheros con bugs distintos en cada copia. PMD detecta tres bloques más. Total eliminado: 340 líneas.</div>
+    <div class="pt-4 text-yellow-300 text-xs font-semibold">La duplicación no es estética. Es una fábrica de bugs asimétricos.</div>
   </div>
   <div class="bg-slate-800 rounded-xl p-5">
-    <div class="text-2xl">☁️</div>
-    <div class="font-bold pt-2">SaaS multitenant</div>
-    <div class="text-sm text-gray-300 pt-3">Límites arquitecturales impidieron que el agente cruzara capas. SonarJS guió los refactors complejos.</div>
-    <div class="pt-4 text-yellow-300 text-xs font-semibold">La calidad del resultado = calidad del contexto.</div>
+    <div class="text-2xl">🚨</div>
+    <div class="font-bold pt-2 text-sm">Snyk bloquea un despliegue crítico</div>
+    <div class="text-xs text-gray-300 pt-3">Plugin de WooCommerce con pasarela de pago. Una librería de PDFs sin actualizar en dos años con un CVE que permitía lectura arbitraria de ficheros. Llevaba seis meses publicado.</div>
+    <div class="pt-4 text-yellow-300 text-xs font-semibold">Las dependencias son código tuyo. Si no las monitorizas, no sabes qué despliegas.</div>
   </div>
   <div class="bg-slate-800 rounded-xl p-5">
-    <div class="text-2xl">🔌</div>
-    <div class="font-bold pt-2">Plugin WordPress</div>
-    <div class="text-sm text-gray-300 pt-3">AGENTS.md con WordPress Coding Standards. Context7 leyó la documentación actualizada de WooCommerce.</div>
-    <div class="pt-4 text-yellow-300 text-xs font-semibold">El agente respeta lo que le dices en el AGENTS.md.</div>
+    <div class="text-2xl">🏗️</div>
+    <div class="font-bold pt-2 text-sm">El agente cruza una boundary sin AGENTS.md</div>
+    <div class="text-xs text-gray-300 pt-3">Sin instrucciones de arquitectura, el agente importa funciones de base de datos desde componentes de interfaz. Funciona y pasa los tests. Tres semanas después una migración de dos horas se convierte en dos días.</div>
+    <div class="pt-4 text-yellow-300 text-xs font-semibold">El agente no conoce tu arquitectura a menos que se la expliques.</div>
   </div>
 </div>
 
@@ -1070,7 +1096,7 @@ class: text-center
 # ¡Gracias!
 
 <div class="pt-6 text-sm text-gray-500">
-  Slides: <span class="text-blue-400">stack-ia-wpsevilla.saidelbakkali.com</span>
+  Slides: <span class="text-blue-400">stack-ia-wpsvq.pages.dev</span>
 </div>
 
 <div class="pt-10 text-gray-400 text-sm">
